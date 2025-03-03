@@ -17,3 +17,6 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+.font-work-sans {
+  font-family: var(--font-work-sans);
+}
