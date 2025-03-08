@@ -8,7 +8,7 @@
 @plugin "tailwindcss-animate";
 
 @theme {
-  --color-primary: oklch(62.3% 0.2268 9.35);
+  --color-primary-default: oklch(62.3% 0.2268 9.35);
   --color-primary-100: oklch(95.17% 0.0271 354.51);
   --color-white-100: oklch(97.61% 0 0);
   --color-secondary: oklch(91.93% 0.174 102.53);
@@ -66,7 +66,7 @@
   }
 
   .pink_container {
-    @apply w-full bg-primary min-h-[530px]  flex justify-center items-center flex-col py-10 px-6;
+    @apply w-full bg-primary-default min-h-[530px]  flex justify-center items-center flex-col py-10 px-6;
   }
 
   .tag {

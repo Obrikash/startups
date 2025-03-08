@@ -16,7 +16,7 @@ const Navbar = async () => {
           {session && session?.user ? (
             <>
               <Link href="/startup/create">
-                <span>Create</span>
+                <span>Создать стартап</span>
               </Link>
               <form
                 action={async () => {
@@ -24,7 +24,7 @@ const Navbar = async () => {
                   await signOut({ redirectTo: "/" });
                 }}
               >
-                <button type="submit">Logout</button>
+                <button type="submit">Выйти из аккаунта</button>
               </form>
 
               <Link href={`/user/${session?.id}`}>
@@ -39,7 +39,7 @@ const Navbar = async () => {
                 await signIn("github");
               }}
             >
-              <button type="submit">Login</button>
+              <button type="submit">Логин</button>
             </form>
           )}
         </div>
