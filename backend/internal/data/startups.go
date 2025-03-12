@@ -9,10 +9,10 @@ import (
 
 type Startup struct {
 	ID            int64     `json:"id"`
-	CreatedAt     time.Time `json:"-"`
+	CreatedAt     time.Time `json:"created_at"`
 	Title         string    `json:"title"`
 	Slug          string    `json:"slug"`
-	AuthorID      int64     `json:"author_id"`
+	AuthorID      int64     `json:"-"`
 	Author        Author    `json:"author"`
 	Views         int64     `json:"views"`
 	Description   string    `json:"description"`
@@ -26,8 +26,20 @@ type StartupModel struct {
 }
 
 func (s StartupModel) GetAll(title string, filters Filters) ([]*Startup, Metadata, error) {
-	query := fmt.Sprintf(`SELECT count(*) OVER(), id, created_at, title, slug, author_id, views, description, category, image_url, pitch_markdown
+	query := fmt.Sprintf(`SELECT count(*) OVER(), 
+    startup.id, 
+    startup.created_at, 
+    startup.title, 
+    startup.slug, 
+    startup.author_id, 
+    author.name AS author_name, 
+    startup.views, 
+    startup.description, 
+    startup.category, 
+    startup.image_url, 
+    startup.pitch_markdown
     FROM startup
+    INNER JOIN author ON startup.author_id = author.id
     WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
     ORDER BY %s %s, id ASC
     LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
@@ -54,7 +66,8 @@ func (s StartupModel) GetAll(title string, filters Filters) ([]*Startup, Metadat
 			&startup.CreatedAt,
 			&startup.Title,
 			&startup.Slug,
-			&startup.AuthorID,
+			&startup.Author.ID,
+            &startup.Author.Name,
 			&startup.Views,
 			&startup.Description,
 			&startup.Category,
