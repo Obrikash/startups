@@ -9,7 +9,7 @@ type Models struct {
 
 func NewModels(db *sql.DB) Models {
     return Models{
-        Authors: AuthorModel{},
-        Startups: StartupModel{},
+        Authors: AuthorModel{DB: db},
+        Startups: StartupModel{DB: db},
     }
 }
