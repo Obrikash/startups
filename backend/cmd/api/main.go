@@ -7,6 +7,8 @@ import (
 	"os"
 	"startups/internal/data"
 	"time"
+
+    _ "github.com/lib/pq"
 )
 
 type config struct {
@@ -53,6 +55,13 @@ func newLogger() *slog.Logger {
 	logHandler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level:     slog.LevelInfo,
 		AddSource: true,
+        ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+            if a.Key == slog.TimeKey {
+                a.Key = "date"
+                a.Value = slog.Int64Value(time.Now().Unix())
+            }
+            return a
+        },
 	})
 
 	return slog.New(logHandler)

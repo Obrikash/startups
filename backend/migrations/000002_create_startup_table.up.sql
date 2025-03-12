@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS startup (
     category VARCHAR(20) NOT NULL CHECK (LENGTH(category) BETWEEN 1 AND 20),
     image_url TEXT NOT NULL,
     pitch_markdown TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
