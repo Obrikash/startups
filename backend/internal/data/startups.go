@@ -146,3 +146,27 @@ func (s StartupModel) Get(id int64) (*Startup, error) {
 
     return startup, nil
 }
+
+func (s StartupModel) UpdateViews(id int64) error {
+    query := `UPDATE startup SET views = views + 1
+    WHERE id = $1`
+
+    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel()
+
+    result, err := s.DB.ExecContext(ctx, query, id)
+    if err != nil {
+        return err
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        return err
+    }
+
+    if rowsAffected == 0 {
+        return ErrRecordNotFound
+    }
+
+    return nil
+}

@@ -12,7 +12,6 @@ export default async function Home({
     `http://localhost:4000/api/startups${query ? `?title=${query}` : ""}`
   );
   const posts = await response.json();
-  console.log(JSON.stringify(posts));
   return (
     <>
       <section className="pink_container pattern">

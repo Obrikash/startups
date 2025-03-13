@@ -14,9 +14,10 @@ const Page = async ({ params }: { params: Promise<{ id: number }> }) => {
 
   const response = await fetch("http://localhost:4000/api/startups/" + id);
   const { startup: post } = await response.json();
-  console.log(post);
   if (!post) return notFound();
-
+  fetch("http://localhost:4000/api/startups/" + id, {
+    method: "PATCH",
+  });
   const parsedContent = md.render(post?.pitch || "");
   return (
     <>

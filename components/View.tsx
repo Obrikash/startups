@@ -1,5 +1,6 @@
 import { EyeIcon } from "lucide-react";
 import React from "react";
+import { unstable_after as after } from "next/server";
 
 const View = ({ views }: { views: number }) => {
   return (
