@@ -5,22 +5,14 @@ import StartupCard from "@/components/StartupCard";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ query?: string }>;
+  searchParams: Promise<{ title?: string }>;
 }) {
-  const query = (await searchParams).query;
-  const posts = [
-    {
-      _createdAt: new Date(),
-      views: 55,
-      author: { _id: 1, name: "Никита" },
-      _id: 1,
-      description: "Описание",
-      image:
-        "https://img.goodfon.ru/wallpaper/big/a/69/kartinka-3d-dikaya-koshka.webp",
-      category: "Роботы",
-      title: "Мы роботы",
-    },
-  ];
+  const query = (await searchParams).title;
+  const response = await fetch(
+    `http://localhost:4000/api/startups${query ? `?title=${query}` : ""}`
+  );
+  const posts = await response.json();
+  console.log(JSON.stringify(posts));
   return (
     <>
       <section className="pink_container pattern">
@@ -37,9 +29,9 @@ export default async function Home({
           {query ? `Результаты поиска для "${query}"` : "Все стартапы"}
         </p>
         <ul className="mt-7 card_grid">
-          {posts?.length > 0 ? (
-            posts.map((post: StartupTypeCard) => (
-              <StartupCard key={post?._id} post={post} />
+          {posts?.metadata?.total_records > 0 ? (
+            posts?.startups.map((post: StartupTypeCard) => (
+              <StartupCard key={post?.id} post={post} />
             ))
           ) : (
             <p className="no-results">No startups found</p>

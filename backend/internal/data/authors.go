@@ -10,11 +10,11 @@ import (
 type Author struct {
 	ID       int64     `json:"id"`
 	Name     string    `json:"name"`
-	Username string    `json:"-"`
+	Username string    `json:"username"`
 	Email    string    `json:"-"`
-	Image    string    `json:"-"`
-	Bio      string    `json:"-"`
-	Startups []Startup `json:"-"`
+	ImageURL string    `json:"image_url"`
+	Bio      string    `json:"bio"`
+	Startups []Startup `json:"startups"`
 }
 
 type AuthorModel struct {
@@ -22,27 +22,27 @@ type AuthorModel struct {
 }
 
 func (m AuthorModel) GetById(id int64) (*Author, error) {
-    query := `SELECT id, name
+	query := `SELECT id, name
         FROM author
         WHERE id = $1`
 
-    var author Author
-    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-    defer cancel()
+	var author Author
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
 
-    err := m.DB.QueryRowContext(ctx, query, id).Scan(
-        &author.ID,
-        &author.Name,
-    )
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&author.ID,
+		&author.Name,
+	)
 
-    if err != nil {
-        switch {
-            case errors.Is(err, sql.ErrNoRows):
-                return nil, ErrRecordNotFound
-            default:
-                return nil, err
-        }
-    }
-    
-    return &author, nil
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &author, nil
 }

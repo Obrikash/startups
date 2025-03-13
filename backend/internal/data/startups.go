@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -87,4 +88,61 @@ func (s StartupModel) GetAll(title string, filters Filters) ([]*Startup, Metadat
     metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
 
     return startups, metadata, nil
+}
+
+func (s StartupModel) Get(id int64) (*Startup, error) {
+    if id < 1 {
+        return nil, ErrRecordNotFound
+    }
+
+    query := `SELECT 
+    startup.id, 
+    startup.title, 
+    startup.slug, 
+    startup.created_at, 
+    author.id AS author_id,
+    author.name AS author_name,
+    author.image_url AS author_image_url,
+    author.bio AS author_bio,
+    author.username AS author_username,
+    startup.views,
+    startup.description,
+    startup.category,
+    startup.image_url,
+    startup.pitch_markdown
+    FROM startup INNER JOIN author ON startup.author_id = author.id
+    WHERE startup.id = $1`
+
+    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel()
+    
+    startup := &Startup{}
+
+    err := s.DB.QueryRowContext(ctx, query, id).Scan(
+        &startup.ID,
+        &startup.Title,
+        &startup.Slug,
+        &startup.CreatedAt,
+        &startup.Author.ID,
+        &startup.Author.Name,
+        &startup.Author.ImageURL,
+        &startup.Author.Bio,
+        &startup.Author.Username,
+        &startup.Views,
+        &startup.Description,
+        &startup.Category,
+        &startup.ImageURL,
+        &startup.PitchMarkdown,
+    )
+
+    if err != nil {
+        switch {
+            case errors.Is(err, sql.ErrNoRows):
+                return nil, ErrRecordNotFound
+            default:
+                return nil, err
+        }
+    }
+
+    return startup, nil
 }
